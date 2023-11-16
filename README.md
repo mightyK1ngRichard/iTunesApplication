@@ -6,7 +6,9 @@
 2. [Установка](#создание-проекта)
 3. [Создание проекта](#создание-проекта)
 4. [Структура проекта](#структура-проекта)
-5. [Начало разработки UI](#начало-разработки-iu)
+5. [Начало разработки UI](#начало-разработки-ui)
+6. [API](#api)
+7. [Итог](#итог)
 
 ## Немного про SwiftUI
 SwiftUI - это фреймворк для создания пользовательских интерфейсов на языке программирования Swift. Он был представлен Apple на конференции WWDC 2019 и стал альтернативой фреймворку UIKit для разработки интерфейсов iOS, macOS, watchOS и tvOS.
@@ -153,7 +155,8 @@ extension Color {
 
 А теперь давайте приступим к коду. Давайте рассмотрим конечный результат и подумаем, какие компоненты нам понядобятся. 
 
-...................
+<img src="Resources/image-14.png" height="400px"/>
+<img src="Resources/image-15.png" height="400px"/>
 
 На главном экране мы видим список треков. Значит нам надо будет сверстать ячейку. Назовём её `MusicCell`. Главный экран мы назовём `SongList`. Для этого нам придётся переименовать дэфолтный `ContentView`. Есть два способа.
 1. Мы ручками меняем везде `ContentView` на `SongList`. 
@@ -204,7 +207,7 @@ import Foundation
 
 struct SongModel: Identifiable {
     let id = UUID()
-    var trackId: Int
+    var trackId: Int?
     var title: String?
     var artist: String?
     var imageURL: URL?
@@ -448,7 +451,7 @@ struct MusicCell: View {
             Button {
                 heartIsSelected.toggle()
                 viewModel.pressedLike(
-                    trackID: song.trackId,
+                    trackID: song.trackId ?? 0,
                     isLiked: heartIsSelected
                 ) {
                     print("Данные записаны в БД!")
@@ -692,3 +695,422 @@ private extension SongDetails {
 Отлично, наше приложение готово. Осталось только написать апишный сервис. Пока проект выглядит так:
 
 <img src="Resources/image-16.png" height="300">
+
+## API
+
+В корень проекта добавим группу Services/Network и Swift File `APIManager` и APIErrors
+
+<img src="Resources/image-18.png" height="130">
+
+Не сложно догадаться, что это ошибки, которые мы будем отлавивать при анмаршиленге
+```swift
+//
+//  APIErrors.swift
+//  iTunesApplication
+//
+//  Created by Dmitriy Permyakov on 16/11/2023.
+//
+
+import Foundation
+
+enum APIError: LocalizedError {
+    case badParameters
+    case dataIsNil
+    case badStatusCode(Int)
+    case error(Error)
+    case responseIsNil
+
+    var errorDescription: String {
+        switch self {
+        case .badParameters: return "Query parameters are incorrectly"
+        case .dataIsNil: return "data is nil"
+        case .responseIsNil: return "response is nil"
+        case .badStatusCode(let code): return "Bad statuc code: \(code)"
+        case .error(let error): return error.localizedDescription
+        }
+    }
+}
+```
+
+А теперь подготовимся к написанию нашего APIManager. Для этого мы добавим ещё два экстеншена для `String` и `Double?`
+
+С помощью этого расширения мы будем преобразовывать Double в опциональную строку
+```swift
+//
+//  Double+Extenstions.swift
+//  iTunesApplication
+//
+//  Created by Dmitriy Permyakov on 16/11/2023.
+//
+
+import Foundation
+
+extension Double? {
+
+    var toString: String? {
+        guard let self else { return nil }
+        return "\(self)"
+    }
+}
+```
+
+С помощью этого расширения мы будем пробразовывать строку в URL?
+```swift
+//
+//  String+Extenstions.swift
+//  iTunesApplication
+//
+//  Created by Dmitriy Permyakov on 16/11/2023.
+//
+
+import Foundation
+
+extension String {
+
+    var toURL: URL? { URL(string: self) }
+}
+```
+
+### Entity
+
+При распарсе данных нам нужный вспомогательные структуры. Они называются Entity.
+
+Вот пример JSON, с которым мы будем работать
+
+```json
+{
+    "resultCount": 42,
+    "results": [
+        {
+            "wrapperType": "track",
+            "kind": "song",
+            "artistId": 506587533,
+            "collectionId": 1058869121,
+            "trackId": 1058869145,
+            "artistName": "Bowsar & Term",
+            "collectionName": "Mirror Universe 2",
+            "trackName": "Motion",
+            "collectionCensoredName": "Mirror Universe 2",
+            "trackCensoredName": "Motion",
+            "collectionArtistId": 331122,
+            "collectionArtistName": "Various Artists",
+            "artistViewUrl": "https://music.apple.com/us/artist/bowsar/506587533?uo=4",
+            "collectionViewUrl": "https://music.apple.com/us/album/motion/1058869121?i=1058869145&uo=4",
+            "trackViewUrl": "https://music.apple.com/us/album/motion/1058869121?i=1058869145&uo=4",
+            "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/4c/d8/39/4cd8397b-7e26-88ca-875e-a6843b1fe581/mzaf_10818377819079898356.plus.aac.p.m4a",
+            "artworkUrl30": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/63/57/96/635796ba-e097-c687-0655-ce0935fb7d1f/8790001179608.png/30x30bb.jpg",
+            "artworkUrl60": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/63/57/96/635796ba-e097-c687-0655-ce0935fb7d1f/8790001179608.png/60x60bb.jpg",
+            "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/63/57/96/635796ba-e097-c687-0655-ce0935fb7d1f/8790001179608.png/100x100bb.jpg",
+            "collectionPrice": 9.99,
+            "trackPrice": 1.29,
+            "releaseDate": "2015-12-14T12:00:00Z",
+            "collectionExplicitness": "notExplicit",
+            "trackExplicitness": "notExplicit",
+            "discCount": 1,
+            "discNumber": 1,
+            "trackCount": 18,
+            "trackNumber": 18,
+            "trackTimeMillis": 293076,
+            "country": "USA",
+            "currency": "USD",
+            "primaryGenreName": "Electronic",
+            "isStreamable": true
+        },
+        {
+            "wrapperType": "track",
+            "kind": "song",
+            "artistId": 274555299,
+            "collectionId": 276908846,
+            "trackId": 276908916,
+            "artistName": "Carolina Liar",
+            "collectionName": "Coming to Terms",
+            "trackName": "Show Me What I'm Looking For",
+            "collectionCensoredName": "Coming to Terms",
+            "trackCensoredName": "Show Me What I'm Looking For",
+            "artistViewUrl": "https://music.apple.com/us/artist/carolina-liar/274555299?uo=4",
+            "collectionViewUrl": "https://music.apple.com/us/album/show-me-what-im-looking-for/276908846?i=276908916&uo=4",
+            "trackViewUrl": "https://music.apple.com/us/album/show-me-what-im-looking-for/276908846?i=276908916&uo=4",
+            "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/68/be/9d/68be9dcb-222d-6cf7-c0cf-e2edfcfd6c8e/mzaf_2375151135634277512.plus.aac.p.m4a",
+            "artworkUrl30": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/50/0a/1e/500a1eac-b447-1299-72dc-d52bd74d3968/mzi.sdgeshou.jpg/30x30bb.jpg",
+            "artworkUrl60": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/50/0a/1e/500a1eac-b447-1299-72dc-d52bd74d3968/mzi.sdgeshou.jpg/60x60bb.jpg",
+            "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/50/0a/1e/500a1eac-b447-1299-72dc-d52bd74d3968/mzi.sdgeshou.jpg/100x100bb.jpg",
+            "collectionPrice": 11.99,
+            "trackPrice": 1.29,
+            "releaseDate": "2008-03-05T12:00:00Z",
+            "collectionExplicitness": "notExplicit",
+            "trackExplicitness": "notExplicit",
+            "discCount": 1,
+            "discNumber": 1,
+            "trackCount": 15,
+            "trackNumber": 4,
+            "trackTimeMillis": 240467,
+            "country": "USA",
+            "currency": "USD",
+            "primaryGenreName": "Pop",
+            "isStreamable": true
+        }
+    ]
+}
+```
+
+Здесь мы видим массив `result` внутри которого необходимые нам треки. 
+
+Добавим группу Entities и файл `CollectionEntity.swift`
+
+```swift
+//
+//  CollectionEntity.swift
+//  iTunesApplication
+//
+//  Created by Dmitriy Permyakov on 16/11/2023.
+//
+
+import Foundation
+
+struct CollectionEntity: Decodable {
+    var results: [SongEntity]
+}
+```
+
+А теперь добавим `SongEntity.swift`
+
+```swift
+//
+//  SongEntity.swift
+//  iTunesApplication
+//
+//  Created by Dmitriy Permyakov on 16/11/2023.
+//
+
+import Foundation
+
+struct SongEntity: Decodable {
+    var trackId: Int?
+    var collectionName: String?
+    var artistName: String?
+    var artworkUrl100: String?
+    var releaseDate: String?
+    var collectionPrice: Double?
+}
+
+// MARK: - Mapper
+
+extension SongEntity {
+
+    var mapper: SongModel {
+        SongModel(
+            trackId: trackId,
+            title: collectionName,
+            artist: artistName,
+            imageURL: artworkUrl100?.toURL,
+            releaseDate: releaseDate,
+            collectionPrice: collectionPrice.toString
+        )
+    }
+}
+```
+
+Обратите внимание на название переменных. В моём случае они уже были в формате камалКейса, принятов в swift, поэтому я назвал перменные также, как и в JSON. Но они могут быть иными, например_такими_вот. Как тогда быть? Два пути. Первый - плохой, назвать переменные_вот_так же. Второй - хороший. Добавить enum:
+
+```swift
+struct SongEntity: Decodable {
+    var trackId: Int?
+    var collectionName: String?
+    var artistName: String?
+    var artworkUrl100: String?
+    var releaseDate: String?
+    var collectionPrice: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case trackId,
+             collectionName,
+             artistName,
+             artworkUrl100,
+             releaseDate,
+             collectionPrice
+    }
+}
+```
+И в нём вы уже прописываете необходимые вам названия. Если они совпадают, то будет как у меня выше, а если, например, `artistName` будет как `artist_name`, тогда будет так:
+
+```swift
+struct SongEntity: Decodable {
+    var trackId: Int?
+    var collectionName: String?
+    var artistName: String?
+    var artworkUrl100: String?
+    var releaseDate: String?
+    var collectionPrice: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case trackId,
+             collectionName,
+             artworkUrl100,
+             releaseDate,
+             collectionPrice
+        case artistName = "artist_name"
+    }
+}
+```
+
+Ну и также у нас есть mapper, который просто преобразует SongEntity -> SongModel
+
+### APIManager
+Всё, мы прописали наши структурки, которые будет парсить. А теперь добавим синглтон APIManager
+
+```swift
+//
+//  APIManager.swift
+//  iTunesApplication
+//
+//  Created by Dmitriy Permyakov on 16/11/2023.
+//
+
+import Foundation
+
+final class APIManager {
+
+    private init() {}
+
+    static let shared = APIManager()
+
+    func getTracks(completion: @escaping (Result<[SongModel], APIError>) -> Void) {
+        let urlString = "https://itunes.apple.com/search?term=${term}&media=music&entity=song"
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.incorrectlyURL))
+            return
+        }
+        let request = URLRequest(url: url)
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error {
+                DispatchQueue.main.async {
+                    completion(.failure(.error(error)))
+                }
+                return
+            }
+            /// Приводим `response` к типу HTTPURLResponse
+            guard let response = response as? HTTPURLResponse else {
+                DispatchQueue.main.async {
+                    completion(.failure(.responseIsNil))
+                }
+                return
+            }
+            /// Провекра кода ответа
+            guard (200..<300).contains(response.statusCode) else {
+                DispatchQueue.main.async {
+                    completion(.failure(APIError.badStatusCode(response.statusCode)))
+                }
+                return
+            }
+            /// Распаковка дата
+            guard let data else {
+                DispatchQueue.main.async {
+                    completion(.failure(.dataIsNil))
+                }
+                return
+            }
+            do {
+                let collections = try JSONDecoder().decode(CollectionEntity.self, from: data)
+                /// Т.к в коллекциях у нас лежит массив `SongEntity`, то мы перебираем массив и маппим их в `SongModel`
+                DispatchQueue.main.async {
+                    completion(.success(collections.results.map { $0.mapper }))
+                }
+                return
+
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(.error(error)))
+                }
+            }
+        }.resume()
+    }
+}
+```
+
+В Swift тип данных Result представляет собой перечисление (enum), используемое для обработки операций, которые могут завершиться успешно или с ошибкой. Он определен следующим образом:
+
+```swift
+Copy code
+enum Result<Success, Failure: Error> {
+    case success(Success)
+    case failure(Failure)
+}
+```
+Где Success - это тип данных для успешного результата, а Failure - это тип данных для ошибки.
+
+Что касается `@escaping`, это атрибут функции в Swift, который указывает на то, что замыкание, переданное в качестве параметра, может быть сохранено для последующего выполнения вне области видимости, в которой было создано. Это часто используется, например, когда замыкание передается в асинхронные функции или сохраняется для выполнения в будущем. Атрибут @escaping позволяет компилятору выполнить определенные проверки, связанные с управлением памятью, чтобы предотвратить возможные утечки памяти или другие проблемы.
+
+`DispatchQueue.main.async` используется в Swift для выполнения определенного кода асинхронно на главной очереди (main queue). Это необходимо в случаях, когда нужно обновить пользовательский интерфейс или выполнить какие-то операции, связанные с графическим интерфейсом, после завершения фоновой работы.
+URLSession.shared.dataTask(with: request) представляет собой асинхронную функцию, выполняющую сетевой запрос. Поскольку сетевые операции могут занимать некоторое время, они обычно выполняются асинхронно, чтобы не блокировать основной поток (main thread), который отвечает за пользовательский интерфейс.
+
+
+Готово, мы написали функцию, которая получает все наши треки. Теперь пойдём во `MainViewModel.swift` и добавим фукнцию получения данных:
+
+Сначала обновим наш протокол:
+
+```swift
+protocol MainViewModelProtocol {
+    func seachTracks(searchText: String) -> [SongModel]
+    func pressedLike(trackID: Int, isLiked: Bool, completion: (() -> Void)?)
+    func getTracks(completion: @escaping (Error?) -> Void) /// Новая фукнция
+}
+```
+И добавим запрос в интренет:
+```swift
+// MARK: - MainViewModelProtocol
+
+extension MainViewModel: MainViewModelProtocol {
+    
+    /// Получение треков
+    /// - Parameter completion: комлишн блок с ошибкой, если она есть
+    func getTracks(completion: @escaping (Error?) -> Void) {
+        APIManager.shared.getTracks { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let data):
+                songs = data
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    ...
+```
+
+В языке программирования Swift ключевое слово weak используется для предотвращения утечек памяти в замыканиях, особенно там, где может возникнуть захват сильной ссылки на объект. Это часто применяется при использовании замыканий внутри асинхронных операций, таких как работы с сетью или асинхронные анимации.
+Когда замыкание захватывает объект сильной ссылкой, это может привести к циклическим зависимостям, когда объект ссылается на замыкание, а замыкание ссылается на объект. Даже после того, как объект больше не нужен, он не может быть освобожден, потому что сильная ссылка на объект все еще существует внутри замыкания.
+Использование weak self в замыканиях решает эту проблему. Когда объект захватывается как weak, это означает, что замыкание содержит слабую (несильную) ссылку на объект.
+
+Отлично! А теперь идём в файл `SongList.swift` и добавим запрос в интернет вместо моков. 
+
+```swift
+...
+// MARK: - Network
+
+private extension SongList {
+
+    func fetchData() {
+        viewModel.getTracks { error in
+            if let error {
+                print(error.localizedDescription)
+                viewModel.songs = .mockData
+            }
+        }
+    }
+}
+...
+```
+
+Готово, теперь мы получаем данные из интернета. А если нам пришла ошибка, мы выводим её в консоль, а на экране отображаем наши мокДанные.
+
+![Alt text](Resources/image-19.png)
+
+### Что можно улучшить? 
+Можно все константы кода выносить в `private extenstion [NameView]` где NameView имя вьюшки.
+Можно доработать АПИ, добавить роутер. Добавить шиммеры при прогрузки фото, вместо лоудера и вынести в отдельный компонент. Но это не цель текущей лабораторной работы.
+## Итог
+[Конечный код проекта](https://github.com/mightyK1ngRichard/iTunesApplication/tree/main/iTunesApplication)
+
+<img src="Resources/main.jpg" height="500px"/>
+<img src="Resources/detail.jpg" height="500px"/>

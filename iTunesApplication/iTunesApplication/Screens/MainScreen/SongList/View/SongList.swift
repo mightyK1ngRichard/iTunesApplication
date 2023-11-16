@@ -58,7 +58,12 @@ struct SongList: View {
 private extension SongList {
 
     func fetchData() {
-        viewModel.songs = .mockData
+        viewModel.getTracks { error in
+            if let error {
+                print(error.localizedDescription)
+                viewModel.songs = .mockData
+            }
+        }
     }
 }
 

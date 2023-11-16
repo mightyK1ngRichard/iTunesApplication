@@ -10,6 +10,7 @@ import Foundation
 protocol MainViewModelProtocol {
     func seachTracks(searchText: String) -> [SongModel]
     func pressedLike(trackID: Int, isLiked: Bool, completion: (() -> Void)?)
+    func getTracks(completion: @escaping (Error?) -> Void)
 }
 
 final class MainViewModel: ObservableObject {
@@ -21,6 +22,21 @@ final class MainViewModel: ObservableObject {
 
 extension MainViewModel: MainViewModelProtocol {
     
+    /// Получение треков
+    /// - Parameter completion: комлишн блок с ошибкой, если она есть
+    func getTracks(completion: @escaping (Error?) -> Void) {
+        APIManager.shared.getTracks { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let data):
+                songs = data
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+
     /// Фильтрация при поиске
     /// - Parameter searchText: текст из сёрч бара
     /// - Returns: массив отфильтрованных песен

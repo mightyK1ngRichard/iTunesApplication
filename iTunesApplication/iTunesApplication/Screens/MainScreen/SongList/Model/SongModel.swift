@@ -9,7 +9,7 @@ import Foundation
 
 struct SongModel: Identifiable {
     let id = UUID()
-    var trackId: Int
+    var trackId: Int?
     var title: String?
     var artist: String?
     var imageURL: URL?

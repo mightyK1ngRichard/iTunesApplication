@@ -64,7 +64,7 @@ struct MusicCell: View {
             Button {
                 heartIsSelected.toggle()
                 viewModel.pressedLike(
-                    trackID: song.trackId,
+                    trackID: song.trackId ?? 0,
                     isLiked: heartIsSelected
                 ) {
                     print("Данные записаны в БД!")

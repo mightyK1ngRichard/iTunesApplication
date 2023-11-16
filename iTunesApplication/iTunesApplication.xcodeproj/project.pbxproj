@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C034DDA2B06576000D97C66 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C034DD92B06576000D97C66 /* APIManager.swift */; };
+		2C034DDC2B065BC100D97C66 /* APIErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C034DDB2B065BC100D97C66 /* APIErrors.swift */; };
+		2C034DE02B065DB300D97C66 /* CollectionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C034DDF2B065DB300D97C66 /* CollectionEntity.swift */; };
+		2C034DE22B065DBC00D97C66 /* SongEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C034DE12B065DBC00D97C66 /* SongEntity.swift */; };
+		2C034DE42B06607E00D97C66 /* String+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C034DE32B06607E00D97C66 /* String+Extenstions.swift */; };
+		2C034DE62B0660F500D97C66 /* Double+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C034DE52B0660F500D97C66 /* Double+Extenstions.swift */; };
 		2C3A11A02B05C13500EC61EA /* iTunesApplicationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A119F2B05C13500EC61EA /* iTunesApplicationApp.swift */; };
 		2C3A11A42B05C13600EC61EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C3A11A32B05C13600EC61EA /* Assets.xcassets */; };
 		2C3A11A72B05C13600EC61EA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C3A11A62B05C13600EC61EA /* Preview Assets.xcassets */; };
@@ -20,6 +26,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C034DD92B06576000D97C66 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		2C034DDB2B065BC100D97C66 /* APIErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIErrors.swift; sourceTree = "<group>"; };
+		2C034DDF2B065DB300D97C66 /* CollectionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionEntity.swift; sourceTree = "<group>"; };
+		2C034DE12B065DBC00D97C66 /* SongEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntity.swift; sourceTree = "<group>"; };
+		2C034DE32B06607E00D97C66 /* String+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extenstions.swift"; sourceTree = "<group>"; };
+		2C034DE52B0660F500D97C66 /* Double+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extenstions.swift"; sourceTree = "<group>"; };
 		2C3A119C2B05C13500EC61EA /* iTunesApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iTunesApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C3A119F2B05C13500EC61EA /* iTunesApplicationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesApplicationApp.swift; sourceTree = "<group>"; };
 		2C3A11A32B05C13600EC61EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -44,6 +56,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C034DD82B06575300D97C66 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2C034DDD2B065BC300D97C66 /* Network */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		2C034DDD2B065BC300D97C66 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				2C034DD92B06576000D97C66 /* APIManager.swift */,
+				2C034DDB2B065BC100D97C66 /* APIErrors.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		2C034DDE2B065D8B00D97C66 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				2C034DDF2B065DB300D97C66 /* CollectionEntity.swift */,
+				2C034DE12B065DBC00D97C66 /* SongEntity.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		2C20A0FA2B062E63009DAD3E /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +109,8 @@
 		2C3A119E2B05C13500EC61EA /* iTunesApplication */ = {
 			isa = PBXGroup;
 			children = (
+				2C034DDE2B065D8B00D97C66 /* Entities */,
+				2C034DD82B06575300D97C66 /* Services */,
 				2C3A11BF2B05C18C00EC61EA /* Application */,
 				2C3A11B72B05C17F00EC61EA /* Extenstions */,
 				2C3A11AD2B05C17F00EC61EA /* Screens */,
@@ -134,6 +174,8 @@
 			children = (
 				2C3A11B82B05C17F00EC61EA /* Color+Extenstions.swift */,
 				2CA504B92B05C9E90083C4CE /* LinearGradient+Extenstions.swift */,
+				2C034DE32B06607E00D97C66 /* String+Extenstions.swift */,
+				2C034DE52B0660F500D97C66 /* Double+Extenstions.swift */,
 			);
 			path = Extenstions;
 			sourceTree = "<group>";
@@ -236,11 +278,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C3A11BE2B05C17F00EC61EA /* Color+Extenstions.swift in Sources */,
+				2C034DE62B0660F500D97C66 /* Double+Extenstions.swift in Sources */,
 				2C3A11A02B05C13500EC61EA /* iTunesApplicationApp.swift in Sources */,
+				2C034DE02B065DB300D97C66 /* CollectionEntity.swift in Sources */,
+				2C034DE22B065DBC00D97C66 /* SongEntity.swift in Sources */,
 				2C3A11BD2B05C17F00EC61EA /* SongList.swift in Sources */,
+				2C034DDA2B06576000D97C66 /* APIManager.swift in Sources */,
 				2C3A11BA2B05C17F00EC61EA /* SongModel.swift in Sources */,
+				2C034DDC2B065BC100D97C66 /* APIErrors.swift in Sources */,
 				2CA504BE2B05CD490083C4CE /* SongDetails.swift in Sources */,
 				2C3A11B92B05C17F00EC61EA /* MainViewModel.swift in Sources */,
+				2C034DE42B06607E00D97C66 /* String+Extenstions.swift in Sources */,
 				2CA504BA2B05C9E90083C4CE /* LinearGradient+Extenstions.swift in Sources */,
 				2C3A11BC2B05C17F00EC61EA /* MusicCell.swift in Sources */,
 			);

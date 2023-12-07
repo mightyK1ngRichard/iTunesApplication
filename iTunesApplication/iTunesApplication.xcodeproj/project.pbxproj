@@ -21,6 +21,7 @@
 		2C3A11BC2B05C17F00EC61EA /* MusicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A11B52B05C17F00EC61EA /* MusicCell.swift */; };
 		2C3A11BD2B05C17F00EC61EA /* SongList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A11B62B05C17F00EC61EA /* SongList.swift */; };
 		2C3A11BE2B05C17F00EC61EA /* Color+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A11B82B05C17F00EC61EA /* Color+Extenstions.swift */; };
+		2CA0ADCC2B220DB800A8019E /* PlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA0ADCB2B220DB800A8019E /* PlaygroundView.swift */; };
 		2CA504BA2B05C9E90083C4CE /* LinearGradient+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA504B92B05C9E90083C4CE /* LinearGradient+Extenstions.swift */; };
 		2CA504BE2B05CD490083C4CE /* SongDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA504BD2B05CD490083C4CE /* SongDetails.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 		2C3A11B52B05C17F00EC61EA /* MusicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicCell.swift; sourceTree = "<group>"; };
 		2C3A11B62B05C17F00EC61EA /* SongList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongList.swift; sourceTree = "<group>"; };
 		2C3A11B82B05C17F00EC61EA /* Color+Extenstions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Extenstions.swift"; sourceTree = "<group>"; };
+		2CA0ADCB2B220DB800A8019E /* PlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundView.swift; sourceTree = "<group>"; };
 		2CA504B92B05C9E90083C4CE /* LinearGradient+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LinearGradient+Extenstions.swift"; sourceTree = "<group>"; };
 		2CA504BD2B05CD490083C4CE /* SongDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetails.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +140,7 @@
 		2C3A11AE2B05C17F00EC61EA /* MainScreen */ = {
 			isa = PBXGroup;
 			children = (
+				2CA0ADCA2B220DA900A8019E /* Playground */,
 				2CA504BC2B05CCD70083C4CE /* SongDetails */,
 				2CA504BB2B05CCC30083C4CE /* SongList */,
 			);
@@ -187,6 +190,14 @@
 				2C3A11A32B05C13600EC61EA /* Assets.xcassets */,
 			);
 			path = Application;
+			sourceTree = "<group>";
+		};
+		2CA0ADCA2B220DA900A8019E /* Playground */ = {
+			isa = PBXGroup;
+			children = (
+				2CA0ADCB2B220DB800A8019E /* PlaygroundView.swift */,
+			);
+			path = Playground;
 			sourceTree = "<group>";
 		};
 		2CA504BB2B05CCC30083C4CE /* SongList */ = {
@@ -278,6 +289,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C3A11BE2B05C17F00EC61EA /* Color+Extenstions.swift in Sources */,
+				2CA0ADCC2B220DB800A8019E /* PlaygroundView.swift in Sources */,
 				2C034DE62B0660F500D97C66 /* Double+Extenstions.swift in Sources */,
 				2C3A11A02B05C13500EC61EA /* iTunesApplicationApp.swift in Sources */,
 				2C034DE02B065DB300D97C66 /* CollectionEntity.swift in Sources */,
